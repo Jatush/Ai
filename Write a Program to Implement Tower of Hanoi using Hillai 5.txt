@@ -1,0 +1,93 @@
+Write a Program to Implement Tower of Hanoi using Hill
+Climbing Algorithm
+
+
+
+import random
+# Function to print the currentstate of the Tower of Hanoi
+def print_state(state):
+print("Pole A:", state[0])
+print("Pole B:", state[1])
+print("Pole C:", state[2])
+# Heuristic function: the number of disks on the goal pole (Pole C in this case)
+def heuristic(state):
+return len(state[2]) # The more disks on pole C, the better
+# Function to check if the puzzle is solved (all disks on Pole C)
+def is_solved(state):
+return state[0] == [] and state[1] == [] # All disks should be on Pole C
+# Function to generate the next possible moves (successors)
+def generate_successors(state):
+successors = []
+# Move the top disk from Pole A to Pole B if valid
+if state[0]:
+new_state = [state[0].copy(),state[1].copy(), state[2].copy()]
+disk = new_state[0].pop()
+new_state[1].append(disk)
+successors.append(new_state)
+# Move the top disk from Pole A to Pole C if valid
+if state[0]:
+new_state = [state[0].copy(),state[1].copy(), state[2].copy()]
+disk = new_state[0].pop()
+new_state[2].append(disk)
+successors.append(new_state)
+# Move the top disk from Pole B to Pole A if valid
+if state[1]:
+
+new_state = [state[0].copy(), state[1].copy(), state[2].copy()]
+disk = new_state[1].pop()
+new_state[0].append(disk)
+successors.append(new_state)
+# Move the top disk from Pole B to Pole C if valid
+if state[1]:
+new_state = [state[0].copy(),state[1].copy(), state[2].copy()]
+disk = new_state[1].pop()
+new_state[2].append(disk)
+successors.append(new_state)
+# Move the top disk from Pole C to Pole A if valid
+if state[2]:
+new_state = [state[0].copy(),state[1].copy(), state[2].copy()]
+disk = new_state[2].pop()
+new_state[0].append(disk)
+successors.append(new_state)
+# Move the top disk from Pole C to Pole B if valid
+if state[2]:
+new_state = [state[0].copy(),state[1].copy(), state[2].copy()]
+disk = new_state[2].pop()
+new_state[1].append(disk)
+successors.append(new_state)
+return successors
+# Hill Climbing Algorithm
+def hill_climbing(start_state):
+current_state = start_state
+steps = 0
+
+
+
+while True:
+steps += 1
+# Check if the puzzle issolved
+if is_solved(current_state):
+print("Puzzle Solved!")
+print_state(current_state)
+print(f"Total Steps: {steps}")
+return current_state
+# Generate all possible successors
+successors = generate_successors(current_state)
+
+# Evaluate all successors using the heuristic function
+successor_scores = [(succ, heuristic(succ)) for succ in successors]
+# Sortsuccessors based on the heuristic score (descending order)
+successor_scores.sort(key=lambda x: x[1], reverse=True)
+# If the bestsuccessor is not better than the currentstate,stop (local maxima)
+if successor_scores[0][1] <= heuristic(current_state):
+print("Stuck at local maximum.")
+print_state(current_state)
+print(f"Total Steps: {steps}")
+return current_state
+# Choose the best successor and move to it
+current_state = successor_scores[0][0]
+print_state(current_state)
+# Initialstate setup for Tower of Hanoi (with 3 disks as an example)
+start_state = [[3, 2, 1], [], []] # All disks on Pole A initially
+# Run the hill climbing algorithm
+hill_climbing(start_state)
